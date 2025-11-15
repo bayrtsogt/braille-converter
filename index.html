@@ -3,33 +3,41 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Дуугаар оношлох туршилтын веб</title>
+    <title>Машины дуугаар оношлох лаборатори</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <header class="page-header">
       <div>
-        <p class="eyebrow">Инженерүүдэд зориулсан дижитал туслах</p>
-        <h1>Машины явдлын дууг ашиглан оношлох демо</h1>
+        <p class="eyebrow">Инженерүүдэд зориулсан дууны лаборатори</p>
+        <h1>Автомашины явах эд ангийн AI оношилгоо</h1>
         <p>
-          Энд та дуу эсвэл видео файл оруулаад хөдөлгүүр, явах эд ангиас гарч буй
-          хэвийн бус чимээг AI-д суурилсан дүрэмчилсэн анализ хийж болох юм.
-          Шинжилгээ нь дууны долгионы үндсэн үзүүлэлтүүдийг тооцон таамаглал гаргана.
+          Дуу болон видео файлыг ачааллаж, Web Audio API + TensorFlow.js-н тусламжтайгаар
+          1 секундийн цонхоор шинжилж, MFCC, mel эрчим, спектрийн статистик зэрэг
+          үзүүлэлтүүдийг ашиглан эвдрэл таамаглана.
         </p>
       </div>
       <div class="header-badge">
-        <span class="badge-title">Realtime</span>
-        <span>Web Audio API анализ</span>
+        <span class="badge-title">Realtime DSP</span>
+        <span>2048 FFT • MFCC • ML classifier</span>
       </div>
     </header>
 
     <main>
       <section class="card" aria-labelledby="upload-title">
-        <h2 id="upload-title">Файл оруулах</h2>
-        <p>
-          WAV, MP3, MP4 зэрэг нийтлэг форматаас аудио болон видео файлыг шууд дэмжинэ.
-          Оруулсан файлын аудио сувгийг Web Audio API ашиглан локал дээр шинжилнэ.
-        </p>
+        <div class="card-header">
+          <h2 id="upload-title">Файл оруулах</h2>
+          <p>
+            WAV, MP3, MP4 зэрэг нийтлэг форматаас аудио болон видео файлыг дэмжинэ. Өгөгдөл
+            нь зөвхөн таны төхөөрөмж дээр боловсруулагдана.
+          </p>
+        </div>
         <div class="uploader" id="drop-zone">
           <div>
             <p class="muted">Drag &amp; Drop эсвэл</p>
@@ -53,79 +61,70 @@
               <option value="undercarriage">Доод явах эд анги, яндан</option>
               <option value="cabin">Салон, жолооны хүрд орчим</option>
             </select>
-            <small class="muted"
-              >Чимээ гарч буй байршлыг сонговол таамаглал илүү нарийвчлалтай
-              болно.</small
-            >
+            <small class="muted">Байршлыг заавал сонговол ML загвар илүү нарийвчлалтай болно.</small>
           </label>
         </div>
       </section>
 
-      <section class="card" aria-labelledby="preview-title">
-        <h2 id="preview-title">Дуу/Видео урьдчилан харах</h2>
-        <div class="preview">
-          <audio id="audio-preview" controls class="hidden" preload="metadata"></audio>
-          <video id="video-preview" controls class="hidden" preload="metadata"></video>
-        </div>
+      <section class="grid">
+        <article class="card preview-card" aria-labelledby="preview-title">
+          <div class="card-header">
+            <h2 id="preview-title">Дуу/Видео урьдчилан харах</h2>
+            <p>Файл сонгосны дараа тоглуулах боломжтой.</p>
+          </div>
+          <div class="preview">
+            <audio id="audio-preview" controls class="hidden" preload="metadata"></audio>
+            <video id="video-preview" controls class="hidden" preload="metadata"></video>
+          </div>
+        </article>
+
+        <article class="card viz-card" aria-labelledby="viz-title">
+          <div class="card-header">
+            <h2 id="viz-title">Долгионы дүрслэл</h2>
+            <p>1 секундийн 50% давхардсан цонхуудын waveform болон mel спектр.</p>
+          </div>
+          <canvas id="waveform" width="800" height="180" role="img" aria-label="Waveform"></canvas>
+          <canvas id="spectrogram" width="800" height="220" role="img" aria-label="Mel spectrogram"></canvas>
+        </article>
       </section>
 
       <section class="card" aria-labelledby="result-title">
-        <h2 id="result-title">Оношилгооны дүн</h2>
-        <div id="result-container" class="result-container muted">
+        <div class="card-header">
+          <h2 id="result-title">Оношилгооны дүн</h2>
+          <p>TensorFlow.js загварын гаралт ба дүрэмчилсэн тайлбар.</p>
+        </div>
+        <div class="result-container" id="result-container">
           Дээрх хэсгээс файл сонгоод хэдхэн секунд хүлээнэ үү.
         </div>
+        <div class="probability-panel">
+          <h3>ML магадлалууд</h3>
+          <div id="probability-bars" class="probability-bars"></div>
+        </div>
+        <div class="segment-controls">
+          <button id="play-segment" class="btn" disabled>Сэжигтэй цонх тоглуулах</button>
+          <span class="muted" id="segment-label">Цонх сонгогдоогүй</span>
+        </div>
+        <details class="json-dump">
+          <summary>JSON бүтэц</summary>
+          <pre id="json-output">{}</pre>
+        </details>
       </section>
 
       <section class="card" aria-labelledby="kb-title">
-        <h2 id="kb-title">Туршлагын сан</h2>
-        <p>
-          Доорх бүртгэл нь инженерүүдийн тэмдэглэсэн жишиг дуу чимээг харуулна. Аудио
-          шинжилгээний үзүүлэлт ижил төстэй бол тухайн хэсэгт оношлох магадлал өндөр байна.
-        </p>
+        <div class="card-header">
+          <h2 id="kb-title">Туршлагын сан</h2>
+          <p>Жишээ шинж тэмдэг, байршлын шошготой.</p>
+        </div>
         <div class="knowledge-base" id="knowledge-base"></div>
       </section>
     </main>
 
-    <template id="result-template">
-      <article class="result">
-        <header>
-          <p class="muted">Илэрсэн асуудал</p>
-          <h3 data-field="component"></h3>
-          <p class="muted location-line">
-            Байршил: <span data-field="location"></span>
-          </p>
-          <p class="severity" data-field="severity"></p>
-        </header>
-        <p data-field="explanation"></p>
-        <div class="feature-grid">
-          <div>
-            <p class="muted">Эрчим (RMS)</p>
-            <p data-field="rms"></p>
-          </div>
-          <div>
-            <p class="muted">Тэг огтлолтын давтамж</p>
-            <p data-field="zcr"></p>
-          </div>
-          <div>
-            <p class="muted">Доод давтамж</p>
-            <p data-field="low"></p>
-          </div>
-          <div>
-            <p class="muted">Дунд давтамж</p>
-            <p data-field="mid"></p>
-          </div>
-          <div>
-            <p class="muted">Өндөр давтамж</p>
-            <p data-field="high"></p>
-          </div>
-          <div>
-            <p class="muted">Итгэлцүүр</p>
-            <p data-field="confidence"></p>
-          </div>
-        </div>
-      </article>
-    </template>
+    <footer class="page-footer">
+      <p>Web Audio API, Meyda/MFCC болон TensorFlow.js дээр ажилладаг локал туршилтын хэрэгсэл.</p>
+      <p class="muted">Chrome · Edge · Safari · Android-д зориулж оновчлогдсон.</p>
+    </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.16.0/dist/tf.min.js"></script>
     <script type="module" src="app.js"></script>
   </body>
 </html>
