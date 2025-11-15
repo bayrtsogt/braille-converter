@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="mn">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Дуугаар оношлох туршилтын веб</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">Инженерүүдэд зориулсан дижитал туслах</p>
+        <h1>Машины явдлын дууг ашиглан оношлох демо</h1>
+        <p>
+          Энд та дуу эсвэл видео файл оруулаад хөдөлгүүр, явах эд ангиас гарч буй
+          хэвийн бус чимээг AI-д суурилсан дүрэмчилсэн анализ хийж болох юм.
+          Шинжилгээ нь дууны долгионы үндсэн үзүүлэлтүүдийг тооцон таамаглал гаргана.
+        </p>
+      </div>
+      <div class="header-badge">
+        <span class="badge-title">Realtime</span>
+        <span>Web Audio API анализ</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="card" aria-labelledby="upload-title">
+        <h2 id="upload-title">Файл оруулах</h2>
+        <p>
+          WAV, MP3, MP4 зэрэг нийтлэг форматаас аудио болон видео файлыг шууд дэмжинэ.
+          Оруулсан файлын аудио сувгийг Web Audio API ашиглан локал дээр шинжилнэ.
+        </p>
+        <div class="uploader" id="drop-zone">
+          <div>
+            <p class="muted">Drag &amp; Drop эсвэл</p>
+            <label class="btn" for="media-input">Файл сонгох</label>
+            <input id="media-input" type="file" accept="audio/*,video/*" hidden />
+            <p class="file-hint" id="file-hint">Одоогоор файл сонгоогүй байна.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="preview-title">
+        <h2 id="preview-title">Дуу/Видео урьдчилан харах</h2>
+        <div class="preview">
+          <audio id="audio-preview" controls class="hidden" preload="metadata"></audio>
+          <video id="video-preview" controls class="hidden" preload="metadata"></video>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="result-title">
+        <h2 id="result-title">Оношилгооны дүн</h2>
+        <div id="result-container" class="result-container muted">
+          Дээрх хэсгээс файл сонгоод хэдхэн секунд хүлээнэ үү.
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="kb-title">
+        <h2 id="kb-title">Туршлагын сан</h2>
+        <p>
+          Доорх бүртгэл нь инженерүүдийн тэмдэглэсэн жишиг дуу чимээг харуулна. Аудио
+          шинжилгээний үзүүлэлт ижил төстэй бол тухайн хэсэгт оношлох магадлал өндөр байна.
+        </p>
+        <div class="knowledge-base" id="knowledge-base"></div>
+      </section>
+    </main>
+
+    <template id="result-template">
+      <article class="result">
+        <header>
+          <p class="muted">Илэрсэн асуудал</p>
+          <h3 data-field="component"></h3>
+          <p class="severity" data-field="severity"></p>
+        </header>
+        <p data-field="explanation"></p>
+        <div class="feature-grid">
+          <div>
+            <p class="muted">Эрчим (RMS)</p>
+            <p data-field="rms"></p>
+          </div>
+          <div>
+            <p class="muted">Тэг огтлолтын давтамж</p>
+            <p data-field="zcr"></p>
+          </div>
+          <div>
+            <p class="muted">Доод давтамж</p>
+            <p data-field="low"></p>
+          </div>
+          <div>
+            <p class="muted">Дунд давтамж</p>
+            <p data-field="mid"></p>
+          </div>
+          <div>
+            <p class="muted">Өндөр давтамж</p>
+            <p data-field="high"></p>
+          </div>
+          <div>
+            <p class="muted">Итгэлцүүр</p>
+            <p data-field="confidence"></p>
+          </div>
+        </div>
+      </article>
+    </template>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
